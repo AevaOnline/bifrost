@@ -29,9 +29,14 @@
   when: testing is defined and testing == true
   with_items:
     - libvirt-bin
-    - qemu-utils
     - qemu-kvm
     - sgabios
+- name: "Work around: Remove bad version of six"
+  apt: name=python-six state=absent
+- name: "Install good version of six"
+  pip: name=six state=present
+- name: "Make sure pip is still present"
+  apt: name=python-pip state=present
 - name: "Ensuring /opt/stack is present"
   file: name=/opt/stack state=directory owner=root group=root
 - name: "Downloading Ironic"
