@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  connection: local
+  name: "Enroll AMT hardware into Ironic"
+  sudo: yes
+  gather_facts: yes
+  roles:
+    - role: ironic-enroll-amt
+      baremetal_csv_file: "{{ baremetal_csv_file | mandatory }}"
