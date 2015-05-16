@@ -1,6 +1,6 @@
 ---
-ironic_url: "http://localhost:6385/"
-network_interface: "virbr0"
+ironic_url: "http://192.168.2.2:6385/"
+network_interface: "eth2"
 # ironic_db_password ironic user password for rabbit
 ironic_db_password: aSecretPassword473z
 # mysql_password: mysql root user password
@@ -25,10 +25,10 @@ deploy_image: "{{http_boot_folder}}/{{deploy_image_filename}}"
 node_default_network_interface: eth0
 # ipv4_subnet_mask is intended for the static ipv4 address assignments.
 ipv4_subnet_mask: 255.255.255.0
-ipv4_gateway: 192.168.1.1
+ipv4_gateway: 192.168.2.1
 ipv4_nameserver: 8.8.8.8
-dhcp_pool_start: 192.168.1.200
-dhcp_pool_end: 192.168.1.250
+dhcp_pool_start: 192.168.2.200
+dhcp_pool_end: 192.168.2.250
 # ipmi_bridging: Default undefined.  Valid values: "no", "single", and "dual"
 # See http://docs.openstack.org/developer/ironic/_modules/ironic/drivers/modules/ipmitool.html
 #ipmi_bridging: no
