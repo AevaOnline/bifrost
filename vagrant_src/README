@@ -1,0 +1,4 @@
+This file is a placeholder for the /opt/stack/ directory within the vagrant VM.
+
+After provisioning the 'bifrost' VM using Vagrant, you should see all the source code
+for Ironic, diskimage-builder, etc, in this directory.
