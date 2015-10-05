@@ -4,7 +4,7 @@
 
 # The network interface that bifrost will be operating on.  Defaults
 # to virbr0 in roles, can be overridden here.
-# network_interface: "virbr0"
+network_interface: "eth2"
 
 
 # ironic_db_password ironic user password for rabbit
@@ -21,7 +21,7 @@ mysql_password:
 
 # If testing is true, then the environment is setup for using libvirt
 # virtual machines for the hardware instead of real hardware.
-# testing: true
+testing: false
 
 # The default port to download files via.  Required for IPA URL generation.
 # Presently the defaults are located in the roles, however if changed both
@@ -65,3 +65,8 @@ create_ipa_image: false
 # clients as default route the same IP of the dnsmasq server.
 # Default: undefined
 # dnsmasq_router: {{ ipv4_gateway }}
+dhcp_pool_start: 192.168.2.3
+dhcp_pool_end: 192.168.2.10
+
+enabled_drivers: "agent_ipmitool,pxe_amt,agent_ilo,agent_ucs,agent_amttool"
+
