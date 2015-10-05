@@ -66,5 +66,8 @@ create_ipa_image: false
 dhcp_pool_start: 192.168.2.3
 dhcp_pool_end: 192.168.2.10
 
-enabled_drivers: "agent_ipmitool,pxe_amt,agent_ilo,agent_ucs,agent_amttool"
 
+ironic_git_url: https://github.com/devananda/ironic.git
+ironic_git_branch: new-amt-driver
+
+enabled_drivers: "agent_ipmitool,pxe_amt,agent_amttool"
