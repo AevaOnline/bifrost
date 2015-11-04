@@ -25,10 +25,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # the bridged interface.
     # NOTE(TheJulia): Is there a way to abstract the bridged networking...
     # NOTE(NobodyCam): until the above is  done this needs to be set to a valid interface
-    bifrost.vm.network 'public_network', bridge: ''
+    bifrost.vm.network 'public_network', bridge: 'eth0', ip: '192.168.2.2'
 
     # besure we get the entire bifrost directory tree
-    bifrost.vm.synced_folder "../../.", "/home/vagrant/bifrost", type: "rsync"
+    bifrost.vm.synced_folder "../../.", "/home/vagrant/bifrost"
 
     bifrost.vm.provision 'ansible' do |ansible|
       ansible.verbose = 'v'
