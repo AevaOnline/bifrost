@@ -1,0 +1,45 @@
+# PULL DOWN ANY CONFIG CHANGES
+git remote add devananda git@github.com:devananda/bifrost.git
+git remote update devananda
+git checkout devananda/nuc-demo-branch
+
+# START VM
+vagrant up
+vagrant ssh
+
+##### OPTIONAL
+# BUILDING INSIDE THE VM
+ansible-playbook playbooks/build-instance-image.yaml -i playbooks/inventory/localhost
+# COPY IMAGE FROM OUTSIDE THE VM
+vagrant ssh-config > .ssh_config
+scp -F .ssh_config deployment_image.qcow2 bifrost:/httpboot/
+########
+
+
+# EXPORT VARS AND PREP ENV
+export AMT_PASSWORD='Pa$$w0rd'
+export AMT_MAC=ec:a8:6b:fe:e1:b0
+export BIFROST_INVENTORY_SOURCE=ironic
+export IMAGE_CHECKSUM=$(md5sum /httpboot/deployment_image.qcow2 | awk '{print $1}')
+
+source bifrost/env-vars
+source /opt/stack/ansible/hacking/env-setup
+cd bifrost/playbooks
+
+# CREATE NODE
+ironic node-create -d agent_amt -n nuc \
+    -i amt_password="$AMT_PASSWORD" -i amt_address='192.168.2.3' -i amt_username='admin' \
+    -i deploy_ramdisk="http://192.168.2.2:8080/ipa.initramfs" \
+    -i deploy_kernel="http://192.168.2.2:8080/ipa.vmlinuz" \
+    -p cpu_arch=x86_64 -p local_gb=64 -p memory_mb=8192 -p cpus=2
+
+ironic port-create -n $(ironic node-list | grep "nuc" | awk '{print $2}' ) -a${AMT_MAC}
+
+# UPDATE NODE BEFORE DEPLOY
+ironic node-update nuc add \
+    instance_info/root_gb=32 \
+    instance_info/image_source=http://192.168.2.2:8080/deployment_image.qcow2 \
+    instance_info/image_checksum=$IMAGE_CHECKSUM
+
+# DO T3H DEPL0Y
+ansible-playbook -vvvv -i inventory/bifrost_inventory.py deploy-dynamic.yaml
