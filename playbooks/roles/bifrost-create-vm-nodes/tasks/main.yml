@@ -15,7 +15,8 @@
 # TODO: Consider converting to ansible virt module.
 ---
 - name: "Update apt cache if Ubuntu/Debian"
-  apt: update_cache=yes
+  apt:
+    update_cache: yes
   when: ansible_os_family == "Debian"
 - name: "Load distribution defaults"
   include_vars: "{{ item }}"
@@ -26,17 +27,18 @@
 # defaults to yum, which may not be installed. This can be safely
 # removed when we start using an ansible release which prefers dnf.
 - name: "Check for dnf"
-  stat: path=/usr/bin/dnf
+  stat:
+    path: "/usr/bin/dnf"
   register: test_dnf
 - name: "Adjust ansible_pkg_mgr if dnf exists"
   set_fact:
     ansible_pkg_mgr: "dnf"
   when: ansible_distribution == 'Fedora' and "{{ test_dnf.stat.exists|bool }}"
 - name: "Install required packages"
-  action: "{{ ansible_pkg_mgr }} name={{item}} state=present"
+  action: "{{ ansible_pkg_mgr }} name={{ item }} state=present"
   with_items: required_packages
 - name: "Restart libvirt service"
-  service: name={{libvirt_service_name}} state=restarted
+  service: name="{{libvirt_service_name}}" state=restarted
 - name: "Create virtual machines"
   script: create_vm_nodes-for-role.sh
   environment:
@@ -55,5 +57,7 @@
   fail: msg="VM creation step failed, please review dmesg output for additional details"
   when: task_create_vm_nodes.rc != 0
 - name: "Set file permissions such that the baremetal csv file at /tmp/baremetal.csv can be read by the user executing Ansible"
-  file: path="{{baremetal_csv_file}}" owner="{{ansible_env.SUDO_USER}}"
+  file:
+    path: "{{baremetal_csv_file}}"
+    owner: "{{ansible_env.SUDO_USER}}"
   when: ansible_env.SUDO_USER is defined and baremetal_csv_file is defined and baremetal_csv_file != ""

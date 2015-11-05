@@ -44,7 +44,7 @@ shade_source_install: false
 
 Bifrost requires access to the network where nodes are located, in order to
 provision the nodes. By default, this setting is set to a value for local
-VM based testing, however if and when your ready to deploy to a physical
+VM based testing, however if and when you're ready to deploy to a physical
 environment, you will need to set the network_interface variable to the
 attached network.
 
@@ -59,6 +59,12 @@ If you chose to utilize the dhcp server, You may wish to set default ranges:
 
 dhcp_pool_start: 192.168.1.200
 dhcp_pool_end: 192.168.1.250
+
+Alternatively, a user can choose to perform static DHCP assignments to nodes.
+This can be enabled by setting the ``inventory_dhcp`` setting to ``true``.
+This will result in the ``dhcp_pool_start`` and ``dhcp_pool_end`` settings
+being ignored and the ``ipv4_address`` setting being bound to the first
+listed MAC address for the node.
 
 In case your HW needs a kernel option to boot, set the following variable:
 
@@ -101,6 +107,33 @@ need to exist. The recommended approach for adding a new variable is:
 - If a given default applies to multiple versions of a distribution, that
   variable needs to be specified for each version which it affects.
 
+If you wish to enable Cross-Origin Resource Sharing (CORS), such as to
+connect a javascript based web client, options have been added to allow
+a user to enable the integrated support.
+
+By default, this support is disabled, but the configuration options are below:
+
+enable_cors: Boolean value, default false, to enable CORS support.
+
+cors_allowed_origin: A URL string that represents the origin sent by the
+                     client web browser. If CORS is enabled, and this is
+                     not set, it will default to http://localhost:8000/.
+
+enable_cors_credential_support: Boolean value, default false.  This variable
+                                toggles the CORS configuration to expect user
+                                authentication.  Since bifrost makes use of
+                                noauth mode, this realistically should not
+                                be modified.
+
+Notes
+-----
+
+This role, by default, deploys an alternative boot.ipxe file to the one
+that ironic deploys, and configures ironic to use this alternative file.
+This is because not every boot case can be covered. If you encounter a
+case where you find that you need to modify the file, please notify us
+by filing a bug in Launchpad, https://bugs.launchpad.net/bifrost/.
+
 Dependencies
 ------------
 
@@ -112,7 +145,7 @@ Example Playbook
 - hosts: localhost
   connection: local
   name: "Install ironic locally"
-  sudo: yes
+  become: yes
   gather_facts: yes
   roles:
     - role: bifrost-ironic-install

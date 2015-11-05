@@ -1,0 +1,7 @@
+- hosts: localhost
+  connection: local
+  name: "Build DIB image"
+  become: yes
+  gather_facts: yes
+  roles:
+    - { role: bifrost-create-dib-image, dib_imagename: "{{ deploy_image|default('deployment_image.qcow2') }}", dib_imagetype: "qcow2", dib_elements: "vm serial-console simple-init {{ extra_dib_elements|default('') }}", when: create_image_via_dib == true and transform_boot_image == false }
